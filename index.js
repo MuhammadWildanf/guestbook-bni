@@ -87,7 +87,7 @@ admin.initializeApp({
     client_x509_cert_url: process.env.FIREBASE_CLIENT_CERT_URL,
     universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
   }),
-  databaseURL: 'https://infocomm-bangkok-default-rtdb.asia-southeast1.firebasedatabase.app'
+  databaseURL: process.env.FIREBASE_DATABASE_URL || 'https://guestbook-bni-default-rtdb.asia-southeast1.firebasedatabase.app'
 });
 
 app.use(express.static(path.join(__dirname, 'frontend')));
