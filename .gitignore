@@ -1,0 +1,5 @@
+node_modules/
+.vs/
+.env
+config/serviceAccountKey.json
+config/serviceAccountKe1y.json

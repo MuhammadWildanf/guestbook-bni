@@ -1,0 +1,312 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* background-image: url("bg.png"); */
+  position: relative;
+  z-index: 0;
+  background-color: #eaed88;
+  background-repeat: repeat;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.background-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  margin-bottom: -30px;
+  width: 100%;
+  height: 760px;
+  background-image: url("bg-bni.png");
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  background-size: cover;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.form-group-floating {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.form-control {
+  height: 56px;
+  padding: 16px 20px;
+  border-radius: 50px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #ff7c00;
+  box-shadow: 0 0 0 0.2rem rgba(255, 124, 0, 0.25);
+  outline: none;
+}
+
+.form-label {
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.form-control:focus + .form-label,
+.form-control:not(:placeholder-shown) + .form-label {
+  top: -1px;
+  font-size: 13px;
+  color: #ffffff;
+  background-color: #ff7c00;
+  padding: 0 8px;
+  border-radius: 20px;
+  border: 1px solid #ff7c00;
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 56px;
+  resize: vertical;
+}
+
+svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-background {
+  position: fixed;
+  /* Menjadikan video tetap di latar belakang */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -1;
+  /* Agar video tidak mengganggu elemen lain di atasnya */
+}
+
+.video-background video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+.custom-card {
+  background-color: rgba(237, 238, 207, 0.6);
+  /* Warna kuning pucat */
+  border-radius: 20px;
+  /* Radius sudut */
+  border: 4px solid #ffffff;
+  /* Garis tipis */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* Bayangan lembut */
+  padding: 20px;
+  /* Jarak konten ke tepi */
+}
+
+.custom-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #00c5f1 0%, #00718a 81%);
+  color: white;
+  width: 246px;
+  /* Lebar sesuai permintaan */
+  height: 54px;
+  /* Tinggi sesuai permintaan */
+  border: none;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 10px 25px rgba(128, 85, 254, 0.4);
+  transition: all 0.3s ease;
+}
+
+#hero {
+  max-height: 170px;
+  width: auto;
+}
+
+.logo-kecil {
+  max-height: 20px;
+  height: auto;
+  width: auto;
+}
+
+#hero-container {
+  margin-bottom: 20px;
+}
+
+#thank {
+  max-width: 500px;
+}
+
+@media (max-width: 768px) {
+  #hero {
+    max-height: 120px;
+    width: auto;
+  }
+
+  #thank {
+    max-width: 350px;
+  }
+
+  #hero-container {
+    margin-bottom: 0px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  #hero {
+    max-height: 150px;
+    width: auto;
+  }
+
+  #hero-container {
+    margin-bottom: 20px;
+  }
+}
+
+.wrapper {
+  width: 100%;
+  flex-direction: column;
+  position: absolute;
+  top: 25px;
+}
+
+.navbar {
+  height: 75px;
+  background-color: black;
+}
+
+.select2-container .select2-selection--single {
+  height: 38px;
+  padding: 6px 12px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 24px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 36px;
+  right: 10px;
+}
+
+.carousel-container {
+  display: flex;
+  padding: 0 35px;
+  align-items: center;
+  justify-content: center;
+}
+
+.carousel-wrapper {
+  max-width: 300px;
+  width: 100%;
+  position: relative;
+}
+
+.carousel-wrapper i {
+  top: 50%;
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  font-size: 1.25rem;
+  position: absolute;
+  text-align: center;
+  line-height: 50px;
+  background: transparent; /* transparan */
+  border: 2px solid #fff; /* warna pinggir */
+  color: #fff; /* warna ikon panah */
+  border-radius: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.1s linear, background 0.2s;
+  z-index: 2;
+}
+
+.carousel-wrapper i:active {
+  transform: translateY(-50%) scale(0.85);
+}
+
+.carousel-wrapper i:first-child {
+  left: -22px;
+}
+
+.carousel-wrapper i:last-child {
+  right: -22px;
+}
+
+.carousel-wrapper .carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 16px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel.no-transition {
+  scroll-behavior: auto;
+}
+
+.carousel.dragging {
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.carousel.dragging .card {
+  cursor: grab;
+  user-select: none;
+}
+
+.carousel :where(.card, .img) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel .card {
+  scroll-snap-align: start;
+  list-style: none;
+  cursor: pointer;
+  padding-bottom: 15px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+}
+
+.card .img img {
+  width: 144px;
+  height: 216px;
+  object-fit: cover;
+}
