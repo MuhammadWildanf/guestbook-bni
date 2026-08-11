@@ -3,82 +3,403 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Manajemen Kata Terlarang</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>BNI WONDRX 2025 - Pengelola Kata Terlarang</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    
+    <!-- DataTables & Responsive CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css" />
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0b132b, #1c2541, #3a506b);
+            color: #f4f5f7;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px 0;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-img {
+            max-height: 35px;
+            width: auto;
+        }
+
+        .dashboard-title {
+            font-weight: 700;
+            background: linear-gradient(180deg, #FF7C00 0%, #FFA24A 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .table {
+            color: #e2e8f0 !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            width: 100% !important;
+        }
+
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: rgba(255, 255, 255, 0.02) !important;
+            color: #e2e8f0 !important;
+        }
+
+        .table-hover > tbody > tr:hover > * {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            color: #ffffff !important;
+        }
+
+        thead.table-custom-header th {
+            background-color: rgba(255, 124, 0, 0.15) !important;
+            color: #FF7C00 !important;
+            border-bottom: 2px solid #FF7C00 !important;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+            padding: 12px;
+        }
+
+        .form-control-custom {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            border-radius: 10px !important;
+            padding: 10px 16px;
+        }
+
+        .form-control-custom:focus {
+            border-color: #FF7C00 !important;
+            box-shadow: 0 0 0 2px rgba(255, 124, 0, 0.2) !important;
+            color: #fff;
+        }
+
+        .btn-custom-orange {
+            background: linear-gradient(180deg, #FF7C00 0%, #E06D00 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(255, 124, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom-orange:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255, 124, 0, 0.4);
+            color: white;
+        }
+
+        /* DataTables styles */
+        .dataTables_filter input {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            border-radius: 8px !important;
+            padding: 6px 12px !important;
+        }
+
+        .dataTables_filter input:focus {
+            outline: none;
+            border-color: #FF7C00 !important;
+            box-shadow: 0 0 0 2px rgba(255, 124, 0, 0.2) !important;
+        }
+
+        .dataTables_length select {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            border-radius: 8px !important;
+            padding: 4px 8px !important;
+        }
+
+        .pagination .page-link {
+            background: rgba(255, 255, 255, 0.03) !important;
+            border-color: rgba(255, 255, 255, 0.08) !important;
+            color: #e2e8f0 !important;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #FF7C00 !important;
+            border-color: #FF7C00 !important;
+            color: white !important;
+        }
+
+        .pagination .page-link:hover {
+            background: rgba(255, 124, 0, 0.1) !important;
+            color: #FF7C00 !important;
+        }
+
+        /* Modal styling */
+        .modal-content {
+            background: #1c2541 !important;
+            color: #f4f5f7 !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 16px !important;
+        }
+
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        .modal-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+        }
+
+        .modal-title {
+            color: #FF7C00;
+            font-weight: 600;
+        }
+
+        .swal2-popup {
+            background: #1c2541 !important;
+            color: #f4f5f7 !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        /* Mobile adaptation */
+        @media (max-width: 767.98px) {
+            .header-container {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            .logo-section {
+                justify-content: center;
+            }
+            .glass-card {
+                padding: 16px;
+            }
+            
+            form.row.g-3 {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            form.row.g-3 div {
+                width: 100%;
+            }
+
+            .dataTables_filter {
+                width: 100%;
+                text-align: center !important;
+                margin-bottom: 15px;
+            }
+            .dataTables_filter input {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-top: 5px;
+            }
+            .dataTables_length {
+                text-align: center !important;
+                margin-bottom: 15px;
+            }
+            
+            .d-flex.justify-content-between {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
   </head>
-  <body class="bg-light">
-    <div class="container py-5">
-      <div class="card shadow">
-        <div class="card-body">
-          <h1 class="card-title text-center mb-4">Manajemen Kata Terlarang</h1>
-
-          <!-- Form Tambah Kata -->
-          <form class="row g-3 mb-4" onsubmit="addBadword(); return false;">
-            <div class="col-md-10">
-              <input type="text" class="form-control" id="newWord" placeholder="Masukkan kata terlarang baru" />
+  <body>
+    <!-- Header Section -->
+    <header class="dashboard-header">
+        <div class="container header-container">
+            <div class="logo-section">
+                <img src="bni.png" alt="BNI Logo" class="logo-img">
+                <h1 class="dashboard-title">BNI WONDRX 2025</h1>
             </div>
-            <div class="col-md-2 d-grid">
-              <button type="submit" class="btn btn-danger">Tambah</button>
+            <div>
+                <a href="/dashboard" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Ke Dashboard Admin
+                </a>
             </div>
-          </form>
+        </div>
+    </header>
 
-          <!-- Daftar Kata Terlarang -->
-          <h5 class="mb-3">Daftar Kata</h5>
-          <ul class="list-group" id="badwordsList"></ul>
+    <main class="container">
+      <div class="glass-card shadow mb-4">
+        <h2 class="h4 mb-3 fw-bold"><i class="fa-solid fa-shield-halved text-warning me-2"></i>Pengelola Kata Terlarang</h2>
+        <p class="text-white-50 mb-4 small">Kelola kata kotor, SARA, dan nama kompetitor yang akan disensor otomatis oleh sistem guestbook.</p>
+
+        <!-- Form Tambah Kata -->
+        <form class="row g-3 mb-5" onsubmit="addBadword(); return false;">
+          <div class="col-md-10">
+            <input type="text" class="form-control form-control-custom" id="newWord" placeholder="Masukkan kata terlarang baru" required />
+          </div>
+          <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-custom-orange">Tambah</button>
+          </div>
+        </form>
+
+        <!-- Daftar Kata Terlarang (Table with Pagination) -->
+        <h5 class="mb-3 text-warning font-weight-bold">Daftar Kata Aktif</h5>
+        <div class="table-responsive">
+          <table id="badwords-table" class="table table-striped table-hover align-middle responsive nowrap" style="width: 100%">
+            <thead class="table-custom-header">
+              <tr>
+                <th style="width: 15%">No</th>
+                <th style="width: 60%">Kata Terlarang</th>
+                <th style="width: 25%">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Dinamis -->
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
+    </main>
 
     <!-- Modal Edit -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-centered">
         <form class="modal-content" onsubmit="submitEdit(); return false;">
           <div class="modal-header">
-            <h5 class="modal-title" id="editModalLabel">Edit Kata Terlarang</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            <h5 class="modal-title" id="editModalLabel"><i class="fa-solid fa-pen-to-square me-2"></i>Edit Kata Terlarang</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
           </div>
           <div class="modal-body">
             <input type="hidden" id="oldWord" />
-            <input type="text" class="form-control" id="newWordEdit" placeholder="Kata baru" required />
+            <div class="mb-3">
+              <label for="newWordEdit" class="form-label small text-white-50">Masukkan Kata Baru</label>
+              <input type="text" class="form-control form-control-custom" id="newWordEdit" placeholder="Kata baru" required />
+            </div>
           </div>
           <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-custom-orange rounded-pill px-4">Simpan Perubahan</button>
           </div>
         </form>
       </div>
     </div>
 
+    <!-- jQuery, Bootstrap, DataTables & Extensions, SweetAlert2 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+
     <script>
       let editModal;
-      document.addEventListener("DOMContentLoaded", () => {
+      let table;
+
+      $(document).ready(function () {
         editModal = new bootstrap.Modal(document.getElementById("editModal"));
+        
+        // Inisialisasi DataTable dengan Pagination & Responsive aktif
+        table = $('#badwords-table').DataTable({
+            responsive: true,
+            columns: [
+                { data: null }, // Nomor urut
+                { data: 'word' },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `
+                            <button class="btn btn-sm btn-outline-warning me-2" onclick="openEditModal('${escapeHtml(row.word)}')">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('${escapeHtml(row.word)}')">
+                                <i class="fa-solid fa-trash"></i> Hapus
+                            </button>
+                        `;
+                    }
+                }
+            ],
+            order: [[1, 'asc']], // Urutkan sesuai abjad A-Z
+            columnDefs: [
+                {
+                    targets: 0,
+                    render: function (data, type, row, meta) {
+                        return meta.row + 1;
+                    },
+                    orderable: false
+                }
+            ],
+            lengthMenu: [10, 25, 50, 100],
+            pageLength: 10
+        });
+
         fetchBadwords();
       });
 
-      async function fetchBadwords() {
-        const res = await fetch("/badwords");
-        const data = await res.json();
-
-        const list = document.getElementById("badwordsList");
-        list.innerHTML = "";
-
-        data.forEach((word) => {
-          const li = document.createElement("li");
-          li.className = "list-group-item d-flex justify-content-between align-items-center";
-
-          li.innerHTML = `
-            <span>${word}</span>
-            <div>
-              <button class="btn btn-sm btn-outline-warning me-2" onclick="openEditModal('${word}')">Edit</button>
-              <button class="btn btn-sm btn-outline-danger" onclick="confirmDelete('${word}')">Hapus</button>
-            </div>
-          `;
-
-          list.appendChild(li);
-        });
+      // Escape HTML Helper
+      function escapeHtml(text) {
+          if (!text) return '';
+          return text
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;")
+              .replace(/'/g, "&#039;");
       }
 
+      // Load data dari server
+      async function fetchBadwords() {
+        try {
+          const res = await fetch("/badwords");
+          const data = await res.json();
+          
+          // Format data array of strings jadi array of objects
+          const formattedData = data.map(word => ({ word }));
+          
+          table.clear().rows.add(formattedData).draw();
+        } catch (error) {
+          console.error("Gagal memuat kata:", error);
+          Swal.fire("Error", "Gagal memuat daftar kata terlarang", "error");
+        }
+      }
+
+      // Tambah Kata Baru
       async function addBadword() {
         const word = document.getElementById("newWord").value.trim();
         if (!word) {
@@ -111,7 +432,8 @@
         }
       }
 
-      function openEditModal(word) {
+      // Edit Kata
+      window.openEditModal = function(word) {
         document.getElementById("oldWord").value = word;
         document.getElementById("newWordEdit").value = word;
         editModal.show();
@@ -151,12 +473,15 @@
         }
       }
 
-      async function confirmDelete(word) {
+      // Hapus Kata
+      window.confirmDelete = async function(word) {
         const confirm = await Swal.fire({
-          title: `Hapus kata "${word}"?`,
-          text: "Tindakan ini tidak bisa dibatalkan.",
+          title: `Hapus "${word}" dari sensor?`,
+          text: "Kata ini akan diperbolehkan masuk ke guestbook tanpa disensor.",
           icon: "warning",
           showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
           confirmButtonText: "Ya, hapus!",
           cancelButtonText: "Batal",
         });
@@ -168,7 +493,7 @@
             Swal.fire({
               icon: "success",
               title: "Terhapus",
-              text: `Kata "${word}" telah dihapus.`,
+              text: `Kata "${word}" telah dihapus dari daftar sensor.`,
               timer: 1500,
               showConfirmButton: false,
             });
@@ -179,7 +504,5 @@
         }
       }
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
