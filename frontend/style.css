@@ -181,6 +181,12 @@ svg {
   width: auto;
 }
 
+.logo-danantara {
+  max-height: 38px;
+  height: auto;
+  width: auto;
+}
+
 #hero-container {
   margin-bottom: 20px;
 }
