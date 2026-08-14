@@ -168,12 +168,15 @@ svg {
 }
 
 #hero {
-  max-height: 170px;
-  width: auto;
+  width: 80%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
 }
 
 .logo-kecil {
-  max-height: 36px;
+  max-height: 20px;
   height: auto;
   width: auto;
 }
@@ -188,8 +191,11 @@ svg {
 
 @media (max-width: 768px) {
   #hero {
-    max-height: 120px;
-    width: auto;
+    width: 85%;
+    max-width: 290px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
   }
 
   #thank {
@@ -203,8 +209,11 @@ svg {
 
 @media (min-width: 769px) and (max-width: 1024px) {
   #hero {
-    max-height: 150px;
-    width: auto;
+    width: 80%;
+    max-width: 300px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
   }
 
   #hero-container {
