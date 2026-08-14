@@ -168,8 +168,8 @@ svg {
 }
 
 #hero {
-  width: 80%;
-  max-width: 320px;
+  width: 100% !important;
+  max-width: 440px !important;
   height: auto;
   display: block;
   margin: 0 auto;
@@ -190,14 +190,6 @@ svg {
 }
 
 @media (max-width: 768px) {
-  #hero {
-    width: 85%;
-    max-width: 290px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-  }
-
   #thank {
     max-width: 350px;
   }
@@ -208,14 +200,6 @@ svg {
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  #hero {
-    width: 80%;
-    max-width: 300px;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-  }
-
   #hero-container {
     margin-bottom: 20px;
   }
