@@ -6,7 +6,35 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 const fs = require('fs');
+const fetch = require('node-fetch');
 const badWordsPath = path.join(__dirname, 'data.json');
+
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+
+// Kirim notifikasi info ke Telegram — tanpa tombol approve/reject
+async function sendTelegramNotif(name, comment) {
+  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+  const text =
+    `💬 *Komentar Baru Masuk*\n\n` +
+    `👤 *Nama:* ${name}\n` +
+    `📝 *Komentar:* ${comment}\n\n` +
+    `_Komentar sudah tampil di wall._`;
+
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text,
+        parse_mode: 'Markdown'
+      })
+    });
+  } catch (err) {
+    console.error('Gagal kirim notifikasi Telegram:', err);
+  }
+}
 
 const leetMap = {
   'a': '[a4@]',
@@ -68,6 +96,34 @@ function censorBadWords(text, badwords) {
   return censoredText;
 }
 
+// Deteksi apakah teks mengandung kata terlarang (tanpa mengubah teks)
+function detectBadWords(text, badwords) {
+  if (!text) return false;
+
+  const sortedBadwords = [...badwords].sort((a, b) => b.length - a.length);
+
+  for (const word of sortedBadwords) {
+    if (!word) continue;
+
+    const patternParts = [];
+    for (let i = 0; i < word.length; i++) {
+      const char = word[i].toLowerCase();
+      const map = leetMap[char] || char;
+      patternParts.push(`${map}+`);
+    }
+    let patternStr = patternParts.join('[^a-zA-Z0-9]*');
+
+    if (word.length <= 4) {
+      patternStr = `(?<=^|[^a-zA-Z0-9])${patternStr}(?=$|[^a-zA-Z0-9])`;
+    }
+
+    const regex = new RegExp(patternStr, 'gi');
+    if (regex.test(text)) return true;
+  }
+
+  return false;
+}
+
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Server running in port:${PORT}`);
@@ -102,25 +158,32 @@ app.use(bodyParser.json());
 
 app.use(cors({ origin: true }));
 
+
 app.post('/submit-form', async (req, res) => {
   try {
     const db = admin.database()
     let { name, char, comment } = req.body;
 
-    // Server-side censorship
+    // Server-side bad word detection — REJECT jika ada kata terlarang
     try {
       const data = fs.readFileSync(badWordsPath, 'utf-8');
       const badwords = JSON.parse(data);
-      name = censorBadWords(name, badwords);
-      comment = censorBadWords(comment, badwords);
+      if (detectBadWords(name, badwords) || detectBadWords(comment, badwords)) {
+        return res.status(400).json({ error: 'BADWORD', message: 'Komentar mengandung kata yang tidak diperbolehkan.' });
+      }
     } catch (err) {
-      console.error('Error during server-side censorship:', err);
+      console.error('Error during server-side bad word check:', err);
     }
 
     const timestamp = admin.database.ServerValue.TIMESTAMP;
     const ref = db.ref('testguest');
-    const newRef = await ref.push({ name, char, comment, timestamp })
-    const newKey = newRef.key
+    // Langsung simpan — tidak perlu approval
+    const newRef = await ref.push({ name, char, comment, timestamp });
+    const newKey = newRef.key;
+
+    // Kirim notifikasi info ke Telegram
+    sendTelegramNotif(name, comment); // fire-and-forget, tidak perlu await
+
     res.status(200).json({ key: newKey, name, char });
   } catch (error) {
     console.error('Error submitting data:', error);
@@ -133,25 +196,28 @@ app.post('/update-form', async (req, res) => {
     const db = admin.database()
     let { key, name, char, comment } = req.body;
 
-    // Server-side censorship
+    // Server-side bad word detection — REJECT jika ada kata terlarang
     try {
       const data = fs.readFileSync(badWordsPath, 'utf-8');
       const badwords = JSON.parse(data);
-      name = censorBadWords(name, badwords);
-      comment = censorBadWords(comment, badwords);
+      if (detectBadWords(name, badwords) || detectBadWords(comment, badwords)) {
+        return res.status(400).json({ error: 'BADWORD', message: 'Komentar mengandung kata yang tidak diperbolehkan.' });
+      }
     } catch (err) {
-      console.error('Error during server-side censorship:', err);
+      console.error('Error during server-side bad word check:', err);
     }
 
     const ref = db.ref(`/testguest/${key}`);
     const timestamp = admin.database.ServerValue.TIMESTAMP;
     await ref.update({ name, char, comment, timestamp });
     res.status(200).json({ msg: "Data Updated Successfully" });
+
   } catch (error) {
     console.error('Error updating data:', error);
     res.status(500).send('Error updating data');
   }
 });
+
 
 app.get('/manage-badwords', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend', 'badwords.html'));
@@ -230,7 +296,7 @@ app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dashboard.html"));
 });
 
-// Ambil semua data
+// Ambil semua data (untuk wall publik)
 app.get("/entries", async (req, res) => {
   try {
     const db = admin.database();
@@ -260,14 +326,15 @@ app.put("/entries/:key", async (req, res) => {
     const ref = db.ref(`testguest/${req.params.key}`);
     let { name, char, comment } = req.body;
 
-    // Apply censorship on edit
+    // Reject jika ada kata terlarang pada edit
     try {
       const data = fs.readFileSync(badWordsPath, 'utf-8');
       const badwords = JSON.parse(data);
-      if (name) name = censorBadWords(name, badwords);
-      if (comment) comment = censorBadWords(comment, badwords);
+      if (detectBadWords(name, badwords) || detectBadWords(comment, badwords)) {
+        return res.status(400).json({ error: 'BADWORD', message: 'Komentar mengandung kata yang tidak diperbolehkan.' });
+      }
     } catch (err) {
-      console.error('Error during censorship in edit:', err);
+      console.error('Error during bad word check in edit:', err);
     }
 
     const updateData = {};
@@ -277,11 +344,12 @@ app.put("/entries/:key", async (req, res) => {
     updateData.timestamp = admin.database.ServerValue.TIMESTAMP;
 
     await ref.update(updateData);
-    res.json({ success: true, censoredName: name, censoredComment: comment });
+    res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 app.delete("/entries/:key", async (req, res) => {
   try {

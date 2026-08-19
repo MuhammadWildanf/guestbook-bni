@@ -1,6 +1,6 @@
-# Guestbook BNI WondrX 2025
+# Guestbook BNI WondrX 2026
 
-Aplikasi guestbook interaktif dengan filter sensor otomatis (censorship) dan dashboard manajemen admin untuk event BNI WondrX 2025.
+Aplikasi guestbook interaktif dengan filter sensor otomatis (censorship) dan dashboard manajemen admin untuk event BNI WondrX 2026.
 
 ## Fitur
 
@@ -12,6 +12,7 @@ Aplikasi guestbook interaktif dengan filter sensor otomatis (censorship) dan das
 ## Cara Menjalankan
 
 1. Instal library pendukung:
+
    ```bash
    npm install
    ```
@@ -19,6 +20,7 @@ Aplikasi guestbook interaktif dengan filter sensor otomatis (censorship) dan das
 2. Konfigurasi file `.env` di root project dengan Firebase credentials Anda.
 
 3. Jalankan server lokal:
+
    ```bash
    npm start
    ```

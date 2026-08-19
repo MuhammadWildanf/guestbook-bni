@@ -26,11 +26,10 @@ const leetMap = {
   'z': '[zZ]'
 };
 
-function censorBadWords(text, badwords) {
-  if (!text) return text;
-  let censoredText = text;
+// Deteksi apakah teks mengandung kata terlarang
+function detectBadWords(text, badwords) {
+  if (!text) return false;
 
-  // Sort badwords from longest to shortest to avoid substring collision (e.g. "anjinggg" before "anjing")
   const sortedBadwords = [...badwords].sort((a, b) => b.length - a.length);
 
   for (const word of sortedBadwords) {
@@ -50,13 +49,12 @@ function censorBadWords(text, badwords) {
     }
 
     const regex = new RegExp(patternStr, 'gi');
-    censoredText = censoredText.replace(regex, (match) => {
-      return '*'.repeat(match.length);
-    });
+    if (regex.test(text)) return true;
   }
 
-  return censoredText;
+  return false;
 }
+
 
 document.getElementById("next").addEventListener("click", async (e) => {
   e.preventDefault();
@@ -76,67 +74,65 @@ document.getElementById("next").addEventListener("click", async (e) => {
   try {
     const res = await fetch("/badwords");
     badwords = await res.json();
-    console.log("Badwords:", badwords);
   } catch (error) {
-    console.error("Gagal memuat data.json", error);
+    console.error("Gagal memuat daftar kata terlarang", error);
   }
 
-  const censoredName = censorBadWords(name, badwords);
-  const censoredComment = censorBadWords(comment, badwords);
-  const hasBadwords = (censoredName !== name || censoredComment !== comment);
+  const hasBadwords = (detectBadWords(name, badwords) || detectBadWords(comment, badwords));
+
+  // Tolak submit jika ada kata terlarang
+  if (hasBadwords) {
+    Swal.fire({
+      icon: "warning",
+      title: "Komentar Tidak Diizinkan",
+      text: "Komentar Anda mengandung kata yang tidak diperbolehkan. Mohon ubah dan kirim ulang.",
+      confirmButtonText: "OK",
+      confirmButtonColor: "#ff7c00",
+    });
+    return; // Hentikan proses, tidak lanjut submit
+  }
 
   document.getElementById("p2").style.display = "block";
   document.getElementById("p1").style.display = "none";
 
-  if (hasBadwords) {
-    Swal.fire({
-      icon: "info",
-      title: "Pemberitahuan",
-      text: "Beberapa kata dalam nama atau komentar Anda telah disensor otomatis demi kenyamanan bersama.",
-      confirmButtonText: "OK",
-      confirmButtonColor: "#ff7c00",
-      timer: 3000,
-      timerProgressBar: true
-    });
-  } else {
-    Swal.fire({
-      html: `
+  Swal.fire({
+    html: `
+    <div style="
+      background-color: #f0f28c;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    ">
       <div style="
-        background-color: #f0f28c;
-        border-radius: 12px;
-        padding: 20px;
+        background-color: #ff8c00;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
         display: flex;
-        flex-direction: column;
         align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
       ">
-        <div style="
-          background-color: #ff8c00;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 10px;
-        ">
-          <i class="fa-solid fa-check" style="color: #fff; font-size: 14px;"></i>
-        </div>
-        <div style="color: #00796B; font-size: 1.5rem; font-weight: bold;">
-          Berhasil
-        </div>
+        <i class="fa-solid fa-check" style="color: #fff; font-size: 14px;"></i>
       </div>
-    `,
-      showConfirmButton: false,
-      background: 'transparent',
-      timer: 1500,
-      customClass: {
-        popup: 'no-border-shadow'
-      }
-    });
-  }
+      <div style="color: #00796B; font-size: 1.5rem; font-weight: bold;">
+        Berhasil
+      </div>
+    </div>
+  `,
+    showConfirmButton: false,
+    background: 'transparent',
+    timer: 1500,
+    customClass: {
+      popup: 'no-border-shadow'
+    }
+  });
 
-  await submit(censoredName, char, censoredComment);
+  await submit(name, char, comment);
 });
+
 
 async function submit(name, char, comment) {
   try {
