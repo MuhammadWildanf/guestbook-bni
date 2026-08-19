@@ -296,6 +296,25 @@ app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dashboard.html"));
 });
 
+// DEBUG sementara — cek env vars Telegram (hapus setelah selesai)
+app.get("/debug-telegram", async (req, res) => {
+  const hasToken = !!process.env.TELEGRAM_BOT_TOKEN;
+  const hasChatId = !!process.env.TELEGRAM_CHAT_ID;
+  // Coba kirim pesan test
+  let sendResult = null;
+  try {
+    const r = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: '🔧 Debug test dari Vercel — env vars terbaca!' })
+    });
+    sendResult = await r.json();
+  } catch (e) {
+    sendResult = { error: e.message };
+  }
+  res.json({ hasToken, hasChatId, sendResult });
+});
+
 // Ambil semua data (untuk wall publik)
 app.get("/entries", async (req, res) => {
   try {
