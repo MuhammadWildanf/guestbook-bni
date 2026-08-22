@@ -159,7 +159,53 @@ app.use(bodyParser.json());
 app.use(cors({ origin: true }));
 
 
-app.post('/submit-form', async (req, res) => {
+const rateLimitCache = new Map();
+
+// Helper to clean expired rate limit entries to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, data] of rateLimitCache.entries()) {
+    if (now > data.resetTime) {
+      rateLimitCache.delete(ip);
+    }
+  }
+}, 60000);
+
+const rateLimiter = (req, res, next) => {
+  const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = typeof rawIp === 'string' ? rawIp.split(',')[0].trim() : rawIp;
+  const now = Date.now();
+  const windowMs = 15000; // 15 seconds window
+  const maxRequests = 2;  // max 2 requests per window
+
+  if (!rateLimitCache.has(ip)) {
+    rateLimitCache.set(ip, {
+      count: 1,
+      resetTime: now + windowMs
+    });
+    return next();
+  }
+
+  const limitData = rateLimitCache.get(ip);
+
+  if (now > limitData.resetTime) {
+    limitData.count = 1;
+    limitData.resetTime = now + windowMs;
+    return next();
+  }
+
+  if (limitData.count >= maxRequests) {
+    return res.status(429).json({
+      error: 'TOO_MANY_REQUESTS',
+      message: 'Tolong jangan mengirim komentar terlalu cepat. Harap tunggu beberapa detik.'
+    });
+  }
+
+  limitData.count++;
+  next();
+};
+
+app.post('/submit-form', rateLimiter, async (req, res) => {
   try {
     const db = admin.database()
     let { name, char, comment } = req.body;
@@ -191,7 +237,7 @@ app.post('/submit-form', async (req, res) => {
   }
 });
 
-app.post('/update-form', async (req, res) => {
+app.post('/update-form', rateLimiter, async (req, res) => {
   try {
     const db = admin.database()
     let { key, name, char, comment } = req.body;

@@ -92,45 +92,15 @@ document.getElementById("next").addEventListener("click", async (e) => {
     return; // Hentikan proses, tidak lanjut submit
   }
 
-  document.getElementById("p2").style.display = "block";
-  document.getElementById("p1").style.display = "none";
+  const nextBtn = document.getElementById("next");
+  nextBtn.disabled = true;
+  nextBtn.textContent = "Mengirim...";
 
-  Swal.fire({
-    html: `
-    <div style="
-      background-color: #f0f28c;
-      border-radius: 12px;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    ">
-      <div style="
-        background-color: #ff8c00;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 10px;
-      ">
-        <i class="fa-solid fa-check" style="color: #fff; font-size: 14px;"></i>
-      </div>
-      <div style="color: #00796B; font-size: 1.5rem; font-weight: bold;">
-        Berhasil
-      </div>
-    </div>
-  `,
-    showConfirmButton: false,
-    background: 'transparent',
-    timer: 1500,
-    customClass: {
-      popup: 'no-border-shadow'
-    }
-  });
-
-  await submit(name, char, comment);
+  const success = await submit(name, char, comment);
+  if (!success) {
+    nextBtn.disabled = false;
+    nextBtn.textContent = "MASUK";
+  }
 });
 
 
@@ -144,20 +114,73 @@ async function submit(name, char, comment) {
       body: JSON.stringify({ name, char, comment }),
     });
 
+    const responseData = await response.json().catch(() => ({}));
+
     if (!response.ok) {
-      const errorMessage = await response.text();
-      throw new Error(
-        `HTTP ${response.status}: ${response.statusText} - ${errorMessage}`
-      );
+      const msg = responseData.message || "Gagal mengirim data. Silakan coba lagi.";
+      Swal.fire({
+        icon: "error",
+        title: "Gagal Mengirim",
+        text: msg,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#ff7c00",
+      });
+      return false;
     }
 
-    const responseData = await response.json();
     console.log("Response Data:", responseData);
 
+    Swal.fire({
+      html: `
+      <div style="
+        background-color: #f0f28c;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      ">
+        <div style="
+          background-color: #ff8c00;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 10px;
+        ">
+          <i class="fa-solid fa-check" style="color: #fff; font-size: 14px;"></i>
+        </div>
+        <div style="color: #00796B; font-size: 1.5rem; font-weight: bold;">
+          Berhasil
+        </div>
+      </div>
+    `,
+      showConfirmButton: false,
+      background: 'transparent',
+      timer: 1500,
+      customClass: {
+        popup: 'no-border-shadow'
+      }
+    });
+
+    document.getElementById("p2").style.display = "block";
+    document.getElementById("p1").style.display = "none";
+
     showThankYouScreen({ name, char });
+    return true;
 
   } catch (error) {
     console.error("Error submitting data:", error.message || error);
+    Swal.fire({
+      icon: "error",
+      title: "Koneksi Bermasalah",
+      text: "Terjadi kesalahan jaringan atau server tidak merespon.",
+      confirmButtonText: "OK",
+      confirmButtonColor: "#ff7c00",
+    });
+    return false;
   }
 }
 
