@@ -398,7 +398,16 @@ app.get('/seed-random', async (req, res) => {
     const db = admin.database();
     const ref = db.ref('testguest');
 
-    const names = ['Wildan', 'Budi', 'Rina', 'Andi', 'Dewi', 'Sinta', 'Hadi', 'Adit', 'Mega', 'Tono'];
+    const names = [
+      'Wildan', 'Budi', 'Rina', 'Andi', 'Dewi', 'Sinta', 'Hadi', 'Adit', 'Mega', 'Tono',
+      'Fajar', 'Rizky', 'Amalia', 'Daffa', 'Sarah', 'Kevin', 'Fitri', 'Aditya', 'Indah', 'Yusuf',
+      'Bagas', 'Anisa', 'Hendra', 'Putri', 'Ari', 'Dian', 'Satria', 'Bella', 'Gilang', 'Gita',
+      'Bayu', 'Nanda', 'Taufik', 'Citra', 'Rama', 'Lestari', 'Doni', 'Kartika', 'Eko', 'Sri',
+      'Farhan', 'Nabila', 'Rian', 'Lia', 'Rudi', 'Dimas', 'Tari', 'Agus', 'Wati', 'Reza',
+      'Maya', 'Denny', 'Sari', 'Arif', 'Evi', 'Faisal', 'Ratih', 'Dani', 'Desi', 'Irfan',
+      'Yuni', 'Rio', 'Ratna', 'Guntur', 'Wulan', 'Bobby', 'Melati', 'Dicky', 'Sandra'
+    ];
+
     const comments = [
       'Mantap BNI WondrX!',
       'Event-nya seru banget dan interaktif!',
@@ -407,7 +416,39 @@ app.get('/seed-random', async (req, res) => {
       'Senang bisa hadir di acara ini.',
       'Sangat informatif dan seru!',
       'Moga makin sukses ke depannya!',
-      'Vibes acaranya luar biasa!'
+      'Vibes acaranya luar biasa!',
+      'Tampilan wondr by BNI fresh banget, suka layout-nya!',
+      'Fitur Insight ngebantu banget buat tracking pengeluaran harian.',
+      'Gak nyangka dapet merchandise keren dari BNI. Thank you!',
+      'Semoga wondr by BNI jadi superapp nomor satu!',
+      'Seru banget main game interaktif di booth BNI.',
+      'Mudah-mudahan BNI terus berinovasi tiada henti!',
+      'Fitur Growth bikin investasi jadi makin gampang & praktis.',
+      'Transaksi pake wondr cepet banget, gak pake lemot.',
+      'Datang ke event ini dapet banyak ilmu keuangan baru.',
+      'Sukses terus untuk peluncuran wondr by BNI!',
+      'Booth-nya estetik parah, instagramable banget!',
+      'Staf BNI ramah-ramah dan penjelasannya clear banget.',
+      'WondrX emang beneran bikin hidup lebih simple!',
+      'Keren bgt visualisasi 3 dimensi keuangan.',
+      'Suka banget sama promo-promo merchant wondr by BNI!',
+      'Gak sabar nunggu inovasi seru berikutnya dari BNI.',
+      'Makin bangga jadi nasabah setia BNI!',
+      'UI/UX wondr by BNI juara sih, clean dan responsif.',
+      'Cara seru buat belajar financial planning ya di event ini.',
+      'Terima kasih BNI atas event yang spektakuler ini!',
+      'Sangat termotivasi buat mulai investasi setelah denger sesinya.',
+      'Wondr by BNI recommended banget buat generasi muda!',
+      'Transaksi makin praktis dan aman pake wondr.',
+      'Fitur-fiturnya lengkap bgt, ngebantu kelola keuangan bulanan.',
+      'Acara BNI WondrX serunya ga abis-abis!',
+      'Gak nyesel dateng jauh-jauh ke event ini.',
+      'Seru, dapet banyak promo menarik pas bikin rekening BNI!',
+      'Wondr by BNI emang best deal bgt buat anak muda.',
+      'Banyak aktivitas menarik di booth BNI hari ini.',
+      'Semoga BNI terus menginspirasi masyarakat Indonesia!',
+      'Event ter-kece tahun ini, BNI emang keren!',
+      'Teknologinya makin canggih, transaksi cashless jadi makin nyaman.'
     ];
 
     const total = parseInt(req.query.total) || 20;
